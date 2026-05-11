@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
+          sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev tree
 
       - name: Make build script executable
         run: chmod +x build_kernel.sh
@@ -21,16 +21,27 @@ jobs:
       - name: Run the build script
         run: ./build_kernel.sh
 
-      - name: Find and upload kernel image directly
+      - name: List all directories to find Image
         run: |
-          find . -name "Image" -type f -exec cp {} ./Image \;
-          find . -name "dtb.img" -type f -exec cp {} ./dtb.img \;
-          ls -la ./Image ./dtb.img || echo "Files not found"
+          echo "=== Listing arch/arm64/boot ==="
+          ls -la arch/arm64/boot/ || echo "Directory not found"
+          echo ""
+          echo "=== Searching for Image anywhere ==="
+          find . -name "Image" -type f 2>/dev/null
+          echo ""
+          echo "=== Searching for zImage anywhere ==="
+          find . -name "zImage" -type f 2>/dev/null
+          echo ""
+          echo "=== Tree view of important directories ==="
+          ls -la ./ || echo "Root directory contents"
 
-      - name: Upload kernel image
+      - name: Upload everything (temporary)
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-image
+          name: full-build-output
           path: |
-            ./Image
-            ./dtb.img
+            **/Image
+            **/zImage
+            **/dtb.img
+            arch/arm64/boot/
+            output/
