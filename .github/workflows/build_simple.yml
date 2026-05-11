@@ -1,0 +1,28 @@
+name: Build Kernel for Crownlte (N960F)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout kernel source
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up build environment
+      run: |
+        sudo apt update
+        sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
+
+    - name: Build Kernel
+      uses: dabao1955/kernel_build_action@main
+      with:
+        kernel-url: ./
+        config: crownlte_defconfig
+        arch: arm64
+        aosp-clang: true
+        anykernel3: true
+        release: true
