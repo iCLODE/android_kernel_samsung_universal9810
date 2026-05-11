@@ -1,4 +1,4 @@
-name: Build Final Kernel for Crownlte (N960F)
+name: Build Kernel using build_kernel.sh
 
 on:
   workflow_dispatch:
@@ -7,16 +7,30 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout kernel source
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build Kernel
-      uses: cyberknight777/kernel_build_action@main
-      with:
-        kernel-url: ./
-        kernel-dir: .
-        config: crownlte_defconfig
-        arch: arm64
-        toolchain: gcc
-        anykernel3: true
-        release: true
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
+
+      - name: Make build script executable
+        run: chmod +x build_kernel.sh
+
+      - name: Run the build script
+        run: ./build_kernel.sh
+
+      - name: Find and upload kernel image directly
+        run: |
+          find . -name "Image" -type f -exec cp {} ./Image \;
+          find . -name "dtb.img" -type f -exec cp {} ./dtb.img \;
+          ls -la ./Image ./dtb.img || echo "Files not found"
+
+      - name: Upload kernel image
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-image
+          path: |
+            ./Image
+            ./dtb.img
