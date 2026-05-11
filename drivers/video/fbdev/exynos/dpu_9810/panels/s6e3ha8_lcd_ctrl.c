@@ -63,10 +63,10 @@ struct decon_lcd s6e3ha8_lcd_info = {
 	.height = 121,
 
 	/* Mhz */
-	.hs_clk = 1100,
+	.hs_clk = 1283,
 	.esc_clk = 20,
 
-	.fps = 60,
+	.fps = 70,
 	.mic_enabled = 1,
 	.mic_ver = MIC_VER_1_2,
 };
