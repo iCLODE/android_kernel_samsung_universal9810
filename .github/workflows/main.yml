@@ -21,12 +21,17 @@ jobs:
       - name: Run the build script
         run: ./build_kernel.sh
 
-      - name: Upload kernel image
+      - name: List build output directory
+        run: |
+          ls -la arch/arm64/boot/ || echo "Not found in arch/arm64/boot/"
+          find . -name "Image" -o -name "Image.gz" -o -name "*.img" 2>/dev/null
+
+      - name: Upload whatever found
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-image
+          name: kernel-outputs
           path: |
-            arch/arm64/boot/Image
-            arch/arm64/boot/Image.gz
-            arch/arm64/boot/Image.gz-dtb
-            *.img
+            **/Image
+            **/Image.gz
+            **/Image.gz-dtb
+            **/*.img
