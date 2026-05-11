@@ -1,4 +1,4 @@
-name: Build Kernel Directly for Crownlte (N960F)
+name: Build Final Kernel for Crownlte (N960F)
 
 on:
   workflow_dispatch:
@@ -10,29 +10,13 @@ jobs:
     - name: Checkout kernel source
       uses: actions/checkout@v4
 
-    - name: Install build dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
-
-    - name: Set up cross-compile environment
-      run: |
-        echo "::group::Download toolchain"
-        git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
-        echo "::endgroup::"
-        echo "CROSS_COMPILE=$GITHUB_WORKSPACE/toolchain/bin/aarch64-linux-android-" >> $GITHUB_ENV
-        echo "ARCH=arm64" >> $GITHUB_ENV
-
-    - name: Configure kernel
-      run: |
-        make crownlte_defconfig
-
-    - name: Build kernel
-      run: |
-        make -j$(nproc)
-
-    - name: Upload kernel image
-      uses: actions/upload-artifact@v4
+    - name: Build Kernel
+      uses: cyberknight777/kernel_build_action@main
       with:
-        name: kernel-image
-        path: arch/arm64/boot/Image
+        kernel-url: ./
+        kernel-dir: .
+        config: crownlte_defconfig
+        arch: arm64
+        toolchain: gcc
+        anykernel3: true
+        release: true
