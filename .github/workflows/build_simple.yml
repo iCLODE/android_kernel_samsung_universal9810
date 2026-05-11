@@ -6,11 +6,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
     - name: Checkout kernel source
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Set up build environment
       run: |
@@ -18,13 +18,11 @@ jobs:
         sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
 
     - name: Build Kernel
-      uses: linux-ia/kernel_build_action@main
+      uses: dabao1955/kernel_build_action@main
       with:
         kernel-url: ./
         config: crownlte_defconfig
         arch: arm64
-        cross-compile: aarch64-linux-gnu-
-        cross-compile-arm32: arm-linux-gnueabi-
         toolchain: gcc
         anykernel3: true
         release: true
