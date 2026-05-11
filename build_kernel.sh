@@ -100,8 +100,9 @@ fi
 	cat $CUR_DIR/arch/arm64/configs/exynos9810-crownlte_defconfig >> $CUR_DIR/arch/arm64/configs/exynos9810_temp_defconfig
 	make exynos9810_temp_defconfig
 	make -j$(nproc --all)
-	cp -vr $CUR_DIR/arch/arm64/boot/Image $ZIP_DIR/Kernel/crownlte/zImage
-	cp -vr $CUR_DIR/arch/arm64/boot/dtb.img $ZIP_DIR/Kernel/crownlte/dtb.img
+	mkdir -p $CUR_DIR/output
+    cp -vr $CUR_DIR/arch/arm64/boot/Image $CUR_DIR/output/Image
+    cp -vr $CUR_DIR/arch/arm64/boot/dtb.img $CUR_DIR/output/dtb.img
 	
 if [ -d $ZIP_ALT_DIR ] 
 then
