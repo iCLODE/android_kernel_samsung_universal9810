@@ -1,4 +1,4 @@
-name: Build Kernel using build_kernel.sh
+name: Build Android Kernel for Crownlte
 
 on:
   workflow_dispatch:
@@ -7,22 +7,24 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout kernel source
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y bc bison build-essential curl flex gcc-multilib g++-multilib git gnupg gperf libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync schedtool squashfs-tools zip zlib1g-dev
+    - name: Build Kernel
+      uses: lemniskett/android-kernel-actions@master
+      id: build
+      with:
+        arch: arm64
+        compiler: gcc/10
+        defconfig: crownlte_defconfig
+        image: Image
 
-      - name: Make build script executable
-        run: chmod +x build_kernel.sh
-
-      - name: Run the build script
-        run: ./build_kernel.sh
-
-      - name: Upload entire build directory
-        uses: actions/upload-artifact@v4
-        with:
-          name: full-source-with-build
-          path: .
+    - name: Upload kernel image
+      uses: actions/upload-artifact@v4
+      with:
+        name: kernel-image
+        path: |
+          out/arch/arm64/boot/Image
+          arch/arm64/boot/Image
